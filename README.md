@@ -1,5 +1,6 @@
 # DeepSeek Harness 动态壁纸
 
+[![npm](https://img.shields.io/npm/v/dsh-harness-wallpaper?logo=npm&color=CB3837)](https://www.npmjs.com/package/dsh-harness-wallpaper)
 ![DeepSeek Harness](https://img.shields.io/badge/DeepSeek_Harness-0.2.1--rc.2-4D6BFE)
 ![TypeScript](https://img.shields.io/badge/TypeScript-6.0-3178C6?logo=typescript&logoColor=white)
 ![React](https://img.shields.io/badge/UI-Harness_%2B_React-149ECA?logo=react&logoColor=white)
@@ -7,7 +8,7 @@
 ![pnpm](https://img.shields.io/badge/pnpm-11.5-F69220?logo=pnpm&logoColor=white)
 ![MIT](https://img.shields.io/badge/License-MIT-green)
 
-用图片、动图或视频装饰 Harness 窗口。入口：**设置 → 壁纸**。npm 包名：`dsh-harness-wallpaper`。
+用图片、动图或视频装饰 Harness 窗口。入口：**设置 → 壁纸**。
 
 ![原生壁纸设置：滑块拖拽调节](./docs/images/settings.png)
 
@@ -19,17 +20,17 @@
 
 ## 安装
 
-适配 **Harness 0.2.1-rc.2**。在插件页安装 `.tgz`，或使用 CLI：
+适配 **Harness 0.2.1-rc.2**。从 [npm](https://www.npmjs.com/package/dsh-harness-wallpaper) 安装：
 
 ```sh
-# 桌面版：替换为安装包的绝对路径
-dsh plugin --profile desktop add file:/absolute/path/dsh-harness-wallpaper-0.2.6.tgz
+# 桌面版
+dsh plugin --profile desktop add dsh-harness-wallpaper
 
 # Web 版：在服务端安装
-dsh plugin --profile web add file:/absolute/path/dsh-harness-wallpaper-0.2.6.tgz
+dsh plugin --profile web add dsh-harness-wallpaper
 ```
 
-安装或更新后重启应用 / Web 服务。发布至 npm 后，可将上面的 `file:...` 替换为 `dsh-harness-wallpaper`。
+安装或更新后重启应用 / Web 服务，进入 **设置 → 壁纸**。也可在插件页选择本地 `.tgz` 安装包。
 
 ## 支持与限制
 
