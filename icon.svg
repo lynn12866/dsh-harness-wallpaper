@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <defs>
+    <linearGradient id="tile" x1="8" y1="4" x2="57" y2="64" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#6B80FF"/>
+      <stop offset="1" stop-color="#3B48C8"/>
+    </linearGradient>
+    <linearGradient id="sky" x1="19" y1="23" x2="49" y2="50" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#9DAEFF"/>
+      <stop offset="1" stop-color="#586CE7"/>
+    </linearGradient>
+    <linearGradient id="wave" x1="16" y1="37" x2="52" y2="49" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#C2FFF2"/>
+      <stop offset="1" stop-color="#81D9E8"/>
+    </linearGradient>
+    <clipPath id="frame">
+      <rect x="16" y="21" width="36" height="28" rx="6"/>
+    </clipPath>
+  </defs>
+  <rect x="2" y="2" width="60" height="60" rx="17" fill="url(#tile)"/>
+  <rect x="2.5" y="2.5" width="59" height="59" rx="16.5" stroke="#fff" stroke-opacity=".18"/>
+  <rect x="11" y="14" width="36" height="29" rx="7" stroke="#D5DEFF" stroke-width="2.5" stroke-opacity=".65"/>
+  <rect x="16" y="21" width="36" height="28" rx="6" fill="url(#sky)"/>
+  <g clip-path="url(#frame)">
+    <circle cx="42" cy="29" r="3.5" fill="#F1F5FF"/>
+    <path d="M12 43c8-13 15-13 23-3s14 5 21-3v15H12V43Z" fill="url(#wave)"/>
+    <path d="M13 49c8-7 17-7 24-1s12 2 18-3v9H13v-5Z" fill="#F4FFFD" fill-opacity=".8"/>
+  </g>
+  <rect x="16" y="21" width="36" height="28" rx="6" stroke="#fff" stroke-width="2.5"/>
+</svg>

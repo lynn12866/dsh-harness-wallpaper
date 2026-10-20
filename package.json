@@ -1,0 +1,86 @@
+{
+  "name": "dsh-harness-wallpaper",
+  "version": "0.2.6",
+  "description": "DeepSeek Harness 动态壁纸：图片、GIF、视频与透明度调整",
+  "type": "module",
+  "license": "MIT",
+  "engines": {
+    "node": ">=22.18",
+    "dsh": ">=0.2.1-rc.2 <0.3.0-0"
+  },
+  "exports": {
+    ".": "./dist/host/index.js",
+    "./client": "./dist/client.js",
+    "./icon": "./icon.svg",
+    "./locale/*.json": "./locale/*.json"
+  },
+  "files": [
+    "dist",
+    "src",
+    "test",
+    "scripts",
+    "tsconfig*.json",
+    "eslint.config.mjs",
+    ".prettierrc.json",
+    ".prettierignore",
+    ".editorconfig",
+    "pnpm-workspace.yaml",
+    "pnpm-lock.yaml",
+    "cordis.patch.yml",
+    "locale/*.json",
+    "icon.svg",
+    "docs/images",
+    "README.md",
+    "CONTRIBUTING.md",
+    "VALIDATION.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "deepseek-harness",
+    "dsh-plugin",
+    "wallpaper",
+    "video",
+    "gif"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "immediately": true,
+      "inject": [
+        "@deepseek-ai/dsh-client-ui-settings",
+        "@deepseek-ai/dsh-client-ui-theme",
+        "@deepseek-ai/dsh-client-connection"
+      ]
+    }
+  },
+  "scripts": {
+    "build": "node --experimental-strip-types scripts/build.ts",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "node --experimental-strip-types --test test/*.test.ts",
+    "check": "pnpm typecheck && pnpm lint && pnpm format:check && pnpm test && pnpm build",
+    "prepack": "pnpm check",
+    "release": "node --experimental-strip-types scripts/release.ts"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public",
+    "tag": "latest"
+  },
+  "devDependencies": {
+    "@eslint/js": "10.0.1",
+    "@types/node": "22.20.5",
+    "@types/react": "18.3.31",
+    "esbuild": "0.28.2",
+    "eslint": "10.13.0",
+    "prettier": "3.9.10",
+    "typescript": "6.0.3",
+    "typescript-eslint": "8.71.2"
+  },
+  "packageManager": "pnpm@11.5.0"
+}
