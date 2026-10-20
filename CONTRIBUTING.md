@@ -29,4 +29,6 @@ Host 使用 Node.js 的 `path`、`fs` 和 `crypto`，文件存于 Harness 提供
 
 `pnpm release --dry-run` 只执行 `npm pack --dry-run` 和相同的检查，不登录、不发布、不生成 tarball。版本号由维护者在发布前更新；npm 的双因素验证在终端或浏览器内完成，脚本不接收密码或令牌。
 
+发布文件由 `package.json` 的 `files` 白名单限定，只包含编译后的 JavaScript、Harness 配置、语言文件、图标、截图、README 和许可证。构建不生成 source map 或类型声明；TypeScript 源码、测试、构建／发布脚本和开发配置只保留在源码项目中。`pnpm check:package` 检查 npm 实际打包清单，发现多余文件或缺少运行入口时终止发布。
+
 命令行为参见 npm 官方的 [login](https://docs.npmjs.com/cli/v11/commands/npm-login/) 与 [publish](https://docs.npmjs.com/cli/v11/commands/npm-publish/) 文档。

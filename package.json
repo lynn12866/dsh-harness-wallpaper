@@ -1,6 +1,6 @@
 {
   "name": "dsh-harness-wallpaper",
-  "version": "0.2.6",
+  "version": "0.2.7",
   "description": "DeepSeek Harness 动态壁纸：图片、GIF、视频与透明度调整",
   "type": "module",
   "license": "MIT",
@@ -15,24 +15,12 @@
     "./locale/*.json": "./locale/*.json"
   },
   "files": [
-    "dist",
-    "src",
-    "test",
-    "scripts",
-    "tsconfig*.json",
-    "eslint.config.mjs",
-    ".prettierrc.json",
-    ".prettierignore",
-    ".editorconfig",
-    "pnpm-workspace.yaml",
-    "pnpm-lock.yaml",
+    "dist/**/*.js",
     "cordis.patch.yml",
     "locale/*.json",
     "icon.svg",
-    "docs/images",
+    "docs/images/settings.png",
     "README.md",
-    "CONTRIBUTING.md",
-    "VALIDATION.md",
     "LICENSE"
   ],
   "keywords": [
@@ -63,7 +51,8 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "test": "node --experimental-strip-types --test test/*.test.ts",
-    "check": "pnpm typecheck && pnpm lint && pnpm format:check && pnpm test && pnpm build",
+    "check:package": "node --experimental-strip-types scripts/check-package.ts",
+    "check": "pnpm typecheck && pnpm lint && pnpm format:check && pnpm test && pnpm build && pnpm check:package",
     "prepack": "pnpm check",
     "release": "node --experimental-strip-types scripts/release.ts"
   },

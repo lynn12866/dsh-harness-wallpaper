@@ -25,7 +25,7 @@ await build({
   external: ['react', '@deepseek-ai/dsh-client-ui-primitives'],
   loader: { '.css': 'text' },
   minify: false,
-  sourcemap: 'external',
+  sourcemap: false,
   legalComments: 'none',
   banner: {
     js: `window.__ModuleLoader__.load({

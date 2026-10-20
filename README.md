@@ -43,11 +43,11 @@ dsh plugin --profile web add dsh-harness-wallpaper
 
 ```sh
 pnpm install --frozen-lockfile
-pnpm check                # 格式、类型、测试和构建
+pnpm check                # 格式、类型、测试、构建和包内容检查
 pnpm release --dry-run    # 校验并预览 npm 包
 pnpm release              # 浏览器登录 npm 后校验、构建并发布
 ```
 
-发布前更新 `package.json` 的 `version`。代码规范和平台说明见 [CONTRIBUTING.md](./CONTRIBUTING.md)，实测记录见 [VALIDATION.md](./VALIDATION.md)。
+以上命令在源码项目中执行。发布前更新 `package.json` 的 `version`；npm 包只包含编译产物、运行配置、图标、语言文件和使用文档。
 
 [MIT](./LICENSE)
