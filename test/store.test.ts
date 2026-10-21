@@ -1,6 +1,5 @@
 import test from 'node:test';
 import type { TestContext } from 'node:test';
-import type { FetchRoute } from '../src/host/contracts.ts';
 import assert from 'node:assert/strict';
 import { mkdtemp, readFile, writeFile, readdir, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
@@ -8,7 +7,7 @@ import { join } from 'node:path';
 import { WallpaperStore, sniff } from '../src/host/store.ts';
 import { CHUNK_BYTES, MAX_BYTES, DEFAULTS, NAMESPACE } from '../src/shared/constants.ts';
 import { createRoute } from '../src/host/rpc.ts';
-import { apply } from '../src/host/index.ts';
+import { mountHost } from './helpers/host.ts';
 
 const gif = Buffer.from('R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7', 'base64');
 async function fixture(t: TestContext) {
@@ -218,29 +217,13 @@ test('RPC envelopes validate method, JSON type and body size', async () => {
   );
 });
 
-test('host registers eight carrier-neutral routes and disposes all resources', async (t) => {
+test('host registers nine carrier-neutral routes and four tools, disposing all resources', async (t) => {
   const directory = await mkdtemp(join(tmpdir(), 'dsh-harness-wallpaper-host-'));
   t.after(() => rm(directory, { recursive: true, force: true }));
-  const routes = new Map<string, FetchRoute>();
-  const effects: (() => void | Promise<void>)[] = [];
-  await apply({
-    profileContext: { dir: directory },
-    connection: {
-      fetch: {
-        register(route) {
-          routes.set(route.path, route);
-          return () => routes.delete(route.path);
-        },
-      },
-    },
-    effect(setup) {
-      const dispose = setup();
-      if (dispose) {
-        effects.push(dispose);
-      }
-    },
-  });
-  assert.equal(routes.size, 8);
+  const { routes, tools, dispose } = await mountHost(directory);
+  t.after(dispose);
+  assert.equal(routes.size, 9);
+  assert.equal(tools.size, 4);
   const endpoint = `/api/${NAMESPACE}/set`;
   const settingsRoute = routes.get(endpoint);
   assert.ok(settingsRoute);
@@ -260,8 +243,7 @@ test('host registers eight carrier-neutral routes and disposes all resources', a
   assert.equal((await response.json()).result.value.config.opacity, 69);
   const saved = JSON.parse(await readFile(join(directory, NAMESPACE, 'library.json'), 'utf8'));
   assert.equal(saved.config.opacity, 69);
-  for (const dispose of effects.reverse()) {
-    await dispose?.();
-  }
+  await dispose();
   assert.equal(routes.size, 0);
+  assert.equal(tools.size, 0);
 });

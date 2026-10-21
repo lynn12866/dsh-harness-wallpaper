@@ -31,6 +31,7 @@ export interface LibraryState {
 }
 
 export interface LibrarySnapshot extends LibraryState {
+  revision: string;
   limits: {
     maxBytes: number;
     chunkBytes: number;
@@ -41,6 +42,7 @@ export interface LibrarySnapshot extends LibraryState {
 
 export interface Api {
   get: { payload: Record<string, never>; result: LibrarySnapshot };
+  watch: { payload: { revision: string }; result: LibrarySnapshot };
   set: { payload: Partial<WallpaperConfig>; result: LibrarySnapshot };
   begin: { payload: { name: string; bytes: number }; result: { id: string; chunkBytes: number } };
   chunk: { payload: { id: string; offset: number; data: string }; result: { received: number } };

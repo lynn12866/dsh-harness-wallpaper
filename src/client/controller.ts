@@ -50,6 +50,23 @@ export class WallpaperController {
     return this.writer.hasPending();
   }
 
+  synchronize(snapshot: LibrarySnapshot): boolean {
+    if (!this.alive || this.state.busy || this.writer.hasPending()) {
+      return false;
+    }
+    const previous = this.state.config;
+    this.adopt(snapshot);
+    if (
+      !previous ||
+      previous.selected !== snapshot.config.selected ||
+      previous.enabled !== snapshot.config.enabled
+    ) {
+      void this.loadSelected();
+    }
+    this.publish({ status: '已同步', error: false });
+    return true;
+  }
+
   update(patch: Partial<WallpaperConfig>): void {
     if (!this.state.ready || this.state.busy || !this.state.config) {
       return;

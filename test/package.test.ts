@@ -15,6 +15,7 @@ const runtimePackage = [
   'dist/host/index.js',
   'dist/host/rpc.js',
   'dist/host/store.js',
+  'dist/host/tools.js',
   'dist/shared/constants.js',
   'dist/shared/types.js',
 ];

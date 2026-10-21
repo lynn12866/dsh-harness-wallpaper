@@ -111,6 +111,8 @@ export class WallpaperStore {
   private readonly uploads = new Map<string, UploadSession>();
   private queue: Promise<unknown> = Promise.resolve();
   private closed = false;
+  private revision = randomUUID();
+  private readonly watchers = new Set<() => void>();
 
   constructor(directory: string) {
     this.directory = directory;
@@ -183,6 +185,7 @@ export class WallpaperStore {
   snapshot(): LibrarySnapshot {
     return structuredClone({
       ...this.state,
+      revision: this.revision,
       limits: {
         maxBytes: MAX_BYTES,
         chunkBytes: CHUNK_BYTES,
@@ -197,12 +200,51 @@ export class WallpaperStore {
       await writeFile(temp, JSON.stringify(next, null, 2), { mode: 0o600 });
       await rename(temp, this.file);
       this.state = next;
+      this.revision = randomUUID();
+      for (const changed of [...this.watchers]) {
+        changed();
+      }
     } finally {
       await rm(temp, { force: true });
     }
   }
   get() {
     return this.run(() => this.snapshot());
+  }
+  /** Long polling uses the authenticated Connection carrier and never holds the mutation queue. */
+  async watch(revision: unknown, signal: AbortSignal): Promise<LibrarySnapshot> {
+    await this.ready;
+    signal.throwIfAborted();
+    if (this.closed) {
+      fail('插件已停用。');
+    }
+    if (typeof revision !== 'string' || revision.length > 100) {
+      fail('同步版本无效。');
+    }
+    if (revision !== this.revision) {
+      return this.snapshot();
+    }
+    if (this.watchers.size >= 64) {
+      fail('壁纸同步连接过多，请稍后重试。');
+    }
+    return new Promise((resolve, reject) => {
+      const cleanup = () => {
+        clearTimeout(timer);
+        this.watchers.delete(changed);
+        signal.removeEventListener('abort', aborted);
+      };
+      const changed = () => {
+        cleanup();
+        resolve(this.snapshot());
+      };
+      const aborted = () => {
+        cleanup();
+        reject(signal.reason);
+      };
+      const timer = setTimeout(changed, 20_000);
+      this.watchers.add(changed);
+      signal.addEventListener('abort', aborted, { once: true });
+    });
   }
   set(patch: unknown): Promise<LibrarySnapshot> {
     return this.run(async () => {
@@ -404,6 +446,9 @@ export class WallpaperStore {
     await this.queue;
     await this.ready.catch(() => {});
     this.closed = true;
+    for (const changed of [...this.watchers]) {
+      changed();
+    }
     for (const id of [...this.uploads.keys()]) {
       await this.cancelInternal(id);
     }

@@ -5,6 +5,7 @@ import type { ClientContext } from './contracts.ts';
 import { WallpaperController } from './controller.ts';
 import { WallpaperRenderer } from './renderer.ts';
 import { WallpaperSettings } from './settings.tsx';
+import { WallpaperSync } from './sync.ts';
 import settingsCss from './settings.css';
 
 export const inject = ['slots', 'connection', 'theme'];
@@ -25,6 +26,11 @@ export function apply(ctx: ClientContext): void {
 
   const renderer = new WallpaperRenderer(ctx, (error) => controller.report(error));
   const controller = new WallpaperController(call, renderer);
+  const sync = new WallpaperSync(
+    call,
+    (snapshot) => controller.synchronize(snapshot),
+    controller.report,
+  );
 
   ctx.effect(() => {
     const stylesheet = document.createElement('style');
@@ -45,8 +51,11 @@ export function apply(ctx: ClientContext): void {
     'dsh-harness-wallpaper: native settings',
   );
   ctx.on('connection/reset', () => {
-    void controller.reload();
+    sync.start();
   });
+  ctx.effect(() => {
+    sync.start();
+    return () => sync.stop();
+  }, 'dsh-harness-wallpaper: live settings sync');
   ctx.effect(() => () => controller.dispose(), 'dsh-harness-wallpaper: renderer lifecycle');
-  void controller.reload();
 }

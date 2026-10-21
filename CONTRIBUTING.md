@@ -11,11 +11,17 @@ pnpm pack --pack-destination artifacts
 
 ## 结构与规范
 
-- `src/client/`：Harness 设置页、保存队列、媒体加载与壁纸渲染。
-- `src/host/`：Connection Fetch 路由、输入校验、分块上传和本地存储。
+- `src/client/`：Harness 设置页、保存队列、实时同步、媒体加载与壁纸渲染。
+- `src/host/`：原生 Agent 工具、Connection Fetch 路由、输入校验、分块上传和本地存储。
 - `src/shared/`：共享类型与常量。`locale/`：插件管理页的中英文名称、描述。
 - UI 和 React 由 Harness 提供；`harness-ui.d.ts` 只声明本插件使用的接口，不复制组件实现。
 - TypeScript strict、ESLint、Prettier；两空格缩进、100 列、分号和单引号，构建产物不压缩。
+
+## Agent 与同步
+
+通过 `ctx.tools.register()` 注册标准工具定义，不打包 Harness 的工具运行时。参数 schema 使用 Harness 支持的 JSON Schema 子集；数值范围与壁纸 id 在存储入口验证。导入通过 `ctx.fs` 与 `ctx.workingDirectory` 读取会话文件，分块复制并检查源文件版本，取消或失败时清理未完成文件。
+
+客户端通过认证 Connection 的 `watch` 路由等待变更；保存成功后唤醒所有等待窗口，空闲等待最多 20 秒。请求取消、插件停用或窗口销毁时清理监听。滑块仍有待保存修改时暂缓接收外部快照，保存完成后重新读取最新状态，避免旧快照覆盖当前编辑。
 
 ## 跨平台
 

@@ -1,7 +1,7 @@
 {
   "name": "dsh-harness-wallpaper",
-  "version": "0.2.8",
-  "description": "DeepSeek Harness 动态壁纸：图片、GIF、视频与透明度调整",
+  "version": "0.3.0",
+  "description": "DeepSeek Harness 动态壁纸：图片、GIF、视频与 Agent 对话控制",
   "type": "module",
   "license": "MIT",
   "engines": {

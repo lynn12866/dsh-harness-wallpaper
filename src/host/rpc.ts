@@ -3,7 +3,7 @@ import { errorMessage, hasErrorCode, isRecord } from '../shared/types.ts';
 import type { FetchRoute } from './contracts.ts';
 
 const BODY_LIMIT = 720 * 1024;
-type Invoke = (payload: Record<string, unknown>) => unknown | Promise<unknown>;
+type Invoke = (payload: Record<string, unknown>, signal: AbortSignal) => unknown | Promise<unknown>;
 
 /** Exact Connection routes inherit Harness authentication and Desktop IPC. */
 export function createRoute(method: string, invoke: Invoke): FetchRoute {
@@ -45,7 +45,7 @@ export function createRoute(method: string, invoke: Invoke): FetchRoute {
 
       let result: unknown;
       try {
-        result = { ok: true, value: await invoke(message.payload) };
+        result = { ok: true, value: await invoke(message.payload, request.signal) };
       } catch (error) {
         result = {
           ok: false,

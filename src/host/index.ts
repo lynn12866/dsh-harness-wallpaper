@@ -3,9 +3,10 @@ import { NAMESPACE } from '../shared/constants.ts';
 import type { HostContext } from './contracts.ts';
 import { createRoute } from './rpc.ts';
 import { WallpaperStore } from './store.ts';
+import { createAgentTools } from './tools.ts';
 
 export const name = NAMESPACE;
-export const inject = ['connection', 'profileContext'];
+export const inject = ['connection', 'profileContext', 'tools', 'fs', 'workingDirectory'];
 
 export async function apply(ctx: HostContext): Promise<void> {
   if (!ctx.connection.fetch?.register || !ctx.profileContext?.dir) {
@@ -18,6 +19,8 @@ export async function apply(ctx: HostContext): Promise<void> {
 
   const handlers = {
     get: () => store.get(),
+    watch: (payload: Record<string, unknown>, signal: AbortSignal) =>
+      store.watch(payload.revision, signal),
     set: (payload: Record<string, unknown>) => store.set(payload),
     begin: ({ name, bytes }: Record<string, unknown>) => store.begin({ name, bytes }),
     chunk: ({ id, offset, data }: Record<string, unknown>) => store.chunk({ id, offset, data }),
@@ -32,6 +35,10 @@ export async function apply(ctx: HostContext): Promise<void> {
       () => ctx.connection.fetch.register(createRoute(method, invoke)),
       `${NAMESPACE}: ${method}`,
     );
+  }
+
+  for (const tool of createAgentTools(ctx, store)) {
+    ctx.effect(() => ctx.tools.register(tool), `${NAMESPACE}: ${tool.name}`);
   }
 
   ctx.effect(() => {
